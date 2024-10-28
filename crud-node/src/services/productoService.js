@@ -44,6 +44,72 @@ class ProductoService {
         }
     }
 
+    async crearProducto(data) {
+        try {
+            const { product_inv_cantidad, ...productoData } = data;
+
+            const nuevoProducto = await Producto(productoData).save(); 
+            await Inventario({
+                idProducto: nuevoProducto._id,
+                inv_cantidad:product_inv_cantidad,
+                inv_fechactualizacion: new Date(),
+            }).save(); 
+
+            return nuevoProducto;
+        } catch (error) {
+            throw new Error(`Error al crear el producto: ${error.message}`);
+        }
+    }
+
+    async obtenerProductoId(productId) {
+        try {
+      
+            const producto = await Producto.findById(productId);
+            if (!producto) {
+                throw new Error(`Producto con ID ${productId} no encontrado.`);
+            }
+    
+            const inventario = await Inventario.findOne({ idProducto: productId });
+            return {
+                ...producto.toObject(),
+                product_inv_cantidad: inventario ? inventario.inv_cantidad : 0
+            };
+        } catch (error) {
+            throw new Error(`Error al obtener el producto: ${error.message}`);
+        }
+    }
+
+
+    async actualizarProducto(productId, updatedData) {
+        try {
+            const { product_inv_cantidad, ...productoData } = updatedData;
+    
+         
+            const productoActualizado = await Producto.findByIdAndUpdate(
+                productId,
+                productoData, 
+                { new: true, runValidators: true }
+            );
+    
+            if (!productoActualizado) {
+                throw new Error(`Producto con ID ${productId} no encontrado.`);
+            }
+    
+            const inventarioActualizado = await Inventario.findOneAndUpdate(
+                { idProducto: productId }, 
+                { 
+                    inv_cantidad: product_inv_cantidad,
+                    inv_fechactualizacion: new Date()
+                },
+                { new: true, upsert: true } 
+            );
+    
+            return { producto: productoActualizado, inventario: inventarioActualizado };
+        } catch (error) {
+            throw new Error(`Error al actualizar el producto: ${error.message}`);
+        }
+    }
+
  
 }
 
