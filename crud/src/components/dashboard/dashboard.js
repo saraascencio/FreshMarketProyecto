@@ -12,6 +12,9 @@ const Dashboard = () => {
   const [filteredProducts, setFilteredProducts] = useState([]); // Productos filtrados
   const [searchTerm, setSearchTerm] = useState(""); // Término de búsqueda
 
+  // Configuración de SpeechRecognition
+  const { transcript, listening, resetTranscript } = useSpeechRecognition();
+
   const fetchProducts = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/producto");
@@ -27,6 +30,43 @@ const Dashboard = () => {
     fetchProducts();
   }, []);
 
+  const normalizeText = (text) => {
+    return text
+      .normalize("NFD") // Descompone caracteres con diacríticos (como tildes)
+      .replace(/[\u0300-\u036f]/g, "") // Elimina los diacríticos
+      .replace(/[.,/#!$%^&*;:{}=_`~()¿¡?]/g, "") // Elimina puntuaciones
+      .trim() // Elimina espacios adicionales
+      .toLowerCase(); // Convierte a minúsculas
+  };
+
+  // Filtrar los productos según el término de búsqueda
+  const filterProducts = (query) => {
+    const normalizedQuery = normalizeText(query); // Normaliza la búsqueda
+    const filtered = products.filter((product) =>
+      normalizeText(product.prod_nombre).includes(normalizedQuery)
+    );
+    setFilteredProducts(filtered);
+  };
+
+  // Manejar búsqueda manual
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    filterProducts(value);
+  };
+
+  // Iniciar escucha de voz
+  const startListening = () => {
+    SpeechRecognition.startListening({ continuous: false, language: "es-ES" });
+  };
+
+  // Actualizar la búsqueda con la transcripción de voz
+  useEffect(() => {
+    if (transcript) {
+      setSearchTerm(transcript);
+      filterProducts(transcript);
+    }
+  }, [transcript]);
 
 
   const handleDelete = async (productId) => {
@@ -61,6 +101,19 @@ const Dashboard = () => {
       <Row>
         <Col>
           <h1 className="text-center mb-5">Inventario de productos</h1>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>
+              <FaSearch />
+            </InputGroup.Text>
+            <FormControl
+              placeholder="Buscar por nombre"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+            <Button onClick={startListening} variant="primary">
+              <FaMicrophone /> {listening ? "Escuchando..." : ""}
+            </Button>
+          </InputGroup>
           <div>
             <Table striped bordered hover className="text-center">
               <thead>
