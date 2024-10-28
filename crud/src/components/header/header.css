@@ -18,3 +18,37 @@
     }
 }
 
+.custom-navbar {
+    background: linear-gradient(135deg, #06bb4b, #11998e); 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.logo {
+    height: 40px; 
+    margin-right: 10px;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff !important; 
+    display: flex;
+    align-items: center; 
+}
+
+.nav-link-custom {
+    color: #fff !important;
+    margin-left: 15px;
+    font-size: 1.1rem;
+    transition: color 0.3s ease; 
+    display: flex;
+    align-items: center; 
+}
+
+.nav-link-custom:hover {
+    color: #ffeb3b !important; 
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5); 
+}

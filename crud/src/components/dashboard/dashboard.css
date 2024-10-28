@@ -29,3 +29,25 @@
     }
 }
 
+.boton-personalizado.btn-gradiente {
+    background: linear-gradient(135deg, #06bb4b, #11998e); 
+    border: none;
+    color: white;
+    transition: background 0.3s ease;
+}
+
+.boton-personalizado.btn-gradiente:hover {
+    background: linear-gradient(135deg, #04a843, #0d867a); 
+}
+
+
+.boton-personalizado.btn-danger {
+    background: linear-gradient(135deg, #ff4b4b, #ff0000); 
+    border: none;
+    color: white;
+    transition: background 0.3s ease;
+}
+
+.boton-personalizado.btn-danger:hover {
+    background: linear-gradient(135deg, #e63939, #cc0000); 
+}
