@@ -1,0 +1,31 @@
+
+@media (max-width: 768px) {
+    .table thead {
+        display: none; 
+    }
+
+    .table tbody, .table tr, .table td {
+        display: block;
+        width: 100%;
+    }
+
+
+    .table td {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+    }
+
+ 
+    .table td::before {
+        content: attr(data-label); 
+        font-weight: bold;
+        width: 50%;
+        display: inline-block;
+    }
+}
+
