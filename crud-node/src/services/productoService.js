@@ -111,6 +111,27 @@ class ProductoService {
     }
 
  
+    async getProductByLote(lote) {
+        try {
+    
+            const producto = await Producto.findOne({ prod_lote: lote });
+    
+    
+            if (!producto) {
+                return null;
+            }
+    
+    
+            const inventario = await Inventario.findOne({ idProducto: producto._id });
+    
+            return {
+                ...producto.toObject(), 
+                inv_cantidad: inventario ? inventario.inv_cantidad : 0, 
+            };
+        } catch (error) {
+            throw new Error('Error al obtener el producto por lote: ' + error.message);
+        }
+    }
 }
 
 module.exports = new ProductoService();

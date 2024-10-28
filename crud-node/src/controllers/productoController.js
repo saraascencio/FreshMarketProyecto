@@ -60,6 +60,21 @@ class ProductoController {
         }
     }
 
+    async getProductByLote(req, res) {
+        try {
+            const lote = req.params.lote; 
+            const producto = await productoService.getProductByLote(lote); 
+    
+            if (!producto) {
+                return res.status(404).json({ error: "Producto no encontrado." });
+            }
+            
+            res.status(200).json(producto); 
+        } catch (error) {
+            res.status(500).json({ error: error.message }); 
+        }
+    }
+    
 
 }
 
