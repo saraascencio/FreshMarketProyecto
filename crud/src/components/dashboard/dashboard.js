@@ -27,6 +27,32 @@ const Dashboard = () => {
     fetchProducts();
   }, []);
 
+
+
+  const handleDelete = async (productId) => {
+    const confirmDelete = window.confirm(
+      "¿Estás seguro de que deseas eliminar este producto?"
+    );
+    if (confirmDelete) {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/producto/${productId}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          fetchProducts();
+        } else {
+          console.log("Error while deleting product:", await response.json());
+        }
+      } catch (error) {
+        console.log("Error while deleting product:", error.message);
+      }
+    }
+  };
+  
   return (
     <Container className="mt-5">
       <Row>
