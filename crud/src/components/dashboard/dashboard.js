@@ -104,6 +104,12 @@ const Dashboard = () => {
                     <td data-label="Cantidad">{product.inv_cantidad}</td>
                     <td data-label="Acción">
                       <ButtonGroup>
+                      <Button
+                          onClick={() => handleUpdate(product._id)}
+                          className="me-2 boton-personalizado btn-gradiente"
+                        >
+                          <FaEdit />
+                        </Button>
                         <Button
                           variant="outline-danger"
                           onClick={() => handleDelete(product._id)}
