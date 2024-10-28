@@ -53,6 +53,9 @@ const Dashboard = () => {
     }
   };
   
+  const handleUpdate = (productId) => {
+    navigate(`/product/${productId}`);
+  };
   return (
     <Container className="mt-5">
       <Row>
