@@ -20,7 +20,7 @@ const Dashboard = () => {
       const response = await fetch("http://localhost:5000/api/producto");
       const data = await response.json();
       setProducts(data);
-      setFilteredProducts(data); 
+      setFilteredProducts(data); // Mostrar todos los productos al inicio
     } catch (error) {
       console.log("Error while fetching products:", error.message);
     }
@@ -29,6 +29,10 @@ const Dashboard = () => {
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  const handleUpdate = (productId) => {
+    navigate(`/product/${productId}`);
+  };
 
   const normalizeText = (text) => {
     return text
@@ -68,6 +72,22 @@ const Dashboard = () => {
     }
   }, [transcript]);
 
+  const handleDescontinuar = async (productId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/producto/${productId}`,
+        {
+          method: "PUT",
+        }
+      );
+
+      if (response.ok) {
+        fetchProducts();
+      }
+    } catch (error) {
+      console.log("Error while descontinuing product:", error.message);
+    }
+  };
 
   const handleDelete = async (productId) => {
     const confirmDelete = window.confirm(
@@ -92,10 +112,7 @@ const Dashboard = () => {
       }
     }
   };
-  
-  const handleUpdate = (productId) => {
-    navigate(`/product/${productId}`);
-  };
+
   return (
     <Container className="mt-5">
       <Row>
@@ -111,7 +128,7 @@ const Dashboard = () => {
               onChange={handleSearch}
             />
             <Button onClick={startListening} variant="primary">
-              <FaMicrophone /> {listening ? "Escuchando..." : ""}
+              <FaMicrophone /> {listening ? "Escuchando...": ""}
             </Button>
           </InputGroup>
           <div>
@@ -157,7 +174,7 @@ const Dashboard = () => {
                     <td data-label="Cantidad">{product.inv_cantidad}</td>
                     <td data-label="Acción">
                       <ButtonGroup>
-                      <Button
+                        <Button
                           onClick={() => handleUpdate(product._id)}
                           className="me-2 boton-personalizado btn-gradiente"
                         >
@@ -170,6 +187,12 @@ const Dashboard = () => {
                         >
                           <FaTrash />
                         </Button>
+                        <Button
+                          className="boton-personalizado btn-danger"
+                          onClick={() => handleDescontinuar(product._id)}
+                        >
+                          Descontinuado
+                        </Button>
                       </ButtonGroup>
                     </td>
                   </tr>
@@ -181,7 +204,6 @@ const Dashboard = () => {
       </Row>
     </Container>
   );
-  
 };
 
 export default Dashboard;

@@ -23,26 +23,37 @@ class ProductoService {
         }
     }
 
-    async eliminarProducto(productId) {
+    async descontinuarProducto(productId) {
         try {
-      
-            const inventarioEliminado = await Inventario.findOneAndDelete({ idProducto: productId });
-            const productoEliminado = await Producto.findByIdAndDelete(productId);
-
+         
+            const updatedProduct = await Producto.findByIdAndUpdate(
+                productId,
+                { prod_disponibilidad: "Descontinuado" },
+                { new: true } 
+            );
+    
         
-            if (!productoEliminado) {
+            if (!updatedProduct) {
                 throw new Error(`Producto con ID ${productId} no encontrado.`);
             }
 
-           
-            return {
-                mensaje: `Producto con ID ${productId} eliminado exitosamente.`,
-                inventarioEliminado: inventarioEliminado ? inventarioEliminado : null,
-            };
+            const updatedInventario = await Inventario.findOneAndUpdate(
+                { idProducto: productId },
+                { inv_cantidad: 0 },
+                { new: true } 
+            );
+    
+          
+            if (!updatedInventario) {
+                throw new Error(`Inventario para el producto con ID ${productId} no encontrado.`);
+            }
+    
+            return { updatedProduct, updatedInventario }; 
         } catch (error) {
-            throw new Error(`Error al eliminar el producto: ${error.message}`);
+            throw new Error(`Error al descontinuar el producto: ${error.message}`);
         }
     }
+    
 
     async crearProducto(data) {
         try {
@@ -110,28 +121,52 @@ class ProductoService {
         }
     }
 
- 
-    async getProductByLote(lote) {
+
+    async eliminarProducto(productId) {
         try {
-    
-            const producto = await Producto.findOne({ prod_lote: lote });
-    
-    
-            if (!producto) {
-                return null;
+      
+            const inventarioEliminado = await Inventario.findOneAndDelete({ idProducto: productId });
+            const productoEliminado = await Producto.findByIdAndDelete(productId);
+
+        
+            if (!productoEliminado) {
+                throw new Error(`Producto con ID ${productId} no encontrado.`);
             }
-    
-    
-            const inventario = await Inventario.findOne({ idProducto: producto._id });
-    
+
+           
             return {
-                ...producto.toObject(), 
-                inv_cantidad: inventario ? inventario.inv_cantidad : 0, 
+                mensaje: `Producto con ID ${productId} eliminado exitosamente.`,
+                inventarioEliminado: inventarioEliminado ? inventarioEliminado : null,
             };
         } catch (error) {
-            throw new Error('Error al obtener el producto por lote: ' + error.message);
+            throw new Error(`Error al eliminar el producto: ${error.message}`);
         }
     }
+
+ 
+
+async getProductByLote(lote) {
+    try {
+
+        const producto = await Producto.findOne({ prod_lote: lote });
+
+
+        if (!producto) {
+            return null;
+        }
+
+
+        const inventario = await Inventario.findOne({ idProducto: producto._id });
+
+        return {
+            ...producto.toObject(), 
+            inv_cantidad: inventario ? inventario.inv_cantidad : 0, 
+        };
+    } catch (error) {
+        throw new Error('Error al obtener el producto por lote: ' + error.message);
+    }
+}
+
 }
 
 module.exports = new ProductoService();
