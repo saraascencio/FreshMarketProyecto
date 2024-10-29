@@ -10,11 +10,11 @@ class ProductoController {
         }
     }
 
-    async eliminarProducto(req, res) {
+    async descontinuarProducto(req, res) {
         try {
             const productId = req.params.id; 
-            const resultado = await productoService.eliminarProducto(productId); 
-            res.status(200).json(resultado); 
+            const updatedProduct = await productoService.descontinuarProducto(productId); 
+            res.status(200).json(updatedProduct); 
         } catch (error) {
             res.status(500).json({ error: error.message }); 
         }
@@ -60,21 +60,32 @@ class ProductoController {
         }
     }
 
-    async getProductByLote(req, res) {
+
+    async eliminarProducto(req, res) {
         try {
-            const lote = req.params.lote; 
-            const producto = await productoService.getProductByLote(lote); 
-    
-            if (!producto) {
-                return res.status(404).json({ error: "Producto no encontrado." });
-            }
-            
-            res.status(200).json(producto); 
+            const productId = req.params.id; 
+            const resultado = await productoService.eliminarProducto(productId); 
+            res.status(200).json(resultado); 
         } catch (error) {
             res.status(500).json({ error: error.message }); 
         }
     }
-    
+
+
+async getProductByLote(req, res) {
+    try {
+        const lote = req.params.lote; 
+        const producto = await productoService.getProductByLote(lote); 
+
+        if (!producto) {
+            return res.status(404).json({ error: "Producto no encontrado." });
+        }
+        
+        res.status(200).json(producto); 
+    } catch (error) {
+        res.status(500).json({ error: error.message }); 
+    }
+}
 
 }
 
